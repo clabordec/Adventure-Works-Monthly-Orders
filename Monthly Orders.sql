@@ -131,5 +131,55 @@ ON s.OrderMonth = p.OrderMonth
 ORDER BY 1
 
 
-DROP TABLE #Purchases
+CREATE TABLE #Sales (
+	OrderMonth DATE,
+	TotalSales MONEY
+)
+
+INSERT INTO #Sales (
+	OrderMonth,
+	TotalSales
+)
+SELECT OrderMonth,
+	   TotalSales = SUM(TotalDue)
+FROM (
+	SELECT OrderDate,
+		   OrderMonth = DATEFROMPARTS(YEAR(OrderDate), MONTH(OrderDate), 1),
+		   TotalDue,
+		   OrderRank = ROW_NUMBER() OVER(PARTITION BY DATEFROMPARTS(YEAR(OrderDate), MONTH(OrderDate), 1) ORDER BY TotalDue DESC)
+	FROM [AdventureWorks2019].[Sales].[SalesOrderHeader]
+) X
+WHERE OrderRank > 10
+GROUP BY OrderMonth
+
+
+CREATE TABLE #Purchases(
+	OrderMonth DATE,
+	TotalPurchases MONEY
+)
+
+INSERT INTO #Purchases (
+	OrderMonth,
+	TotalPurchases
+)
+SELECT OrderMonth,
+	   TotalPurchases = SUM(TotalDue)
+FROM (
+	SELECT OrderDate,
+		   OrderMonth = DATEFROMPARTS(YEAR(OrderDate), MONTH(OrderDate), 1),
+		   TotalDue,
+		   OrderRank = ROW_NUMBER() OVER(PARTITION BY DATEFROMPARTS(YEAR(OrderDate), MONTH(OrderDate), 1) ORDER BY TotalDue DESC)
+	FROM [AdventureWorks2019].[Purchasing].[PurchaseOrderHeader]
+) X
+WHERE OrderRank > 10
+GROUP BY OrderMonth
+
+
+SELECT S.OrderMonth,
+	   TotalSales = FORMAT(S.TotalSales, 'C'),
+	   TotalPurchases = FORMAT(P.TotalPurchases, 'C')
+FROM #Sales S INNER JOIN #Purchases P
+ON S.OrderMonth = P.OrderMonth
+
 DROP TABLE #Sales
+DROP TABLE #Purchases
