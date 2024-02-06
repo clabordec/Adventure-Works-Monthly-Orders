@@ -1,5 +1,3 @@
-# Adventure Works Monthly Orders
-
 ## Project Overview
 
 - Identify the top 10 sales orders per month
