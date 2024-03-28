@@ -34,6 +34,7 @@ The Adventure Works Monthly Orders project aims to analyze monthly order data to
 - Incorporate external factors such as seasonality, promotions, and economic indicators.
 - Improve supply chain efficiency by anticipating demand fluctuations and optimizing production schedules.
 
+<br>
 
 ### Benefits
 
